@@ -29,21 +29,21 @@ async function run() {
     const orderCollection = database.collection("orders");
 
     //GET Srvices API
-    app.get("/services", async (req, res) => {
+    app.get("/packages", async (req, res) => {
       const cursor = packageCollection.find({});
       const packages = await cursor.toArray();
       res.json(packages);
     });
 
     //GET Users API
-    app.get("/users", async (req, res) => {
+    app.get("/orders", async (req, res) => {
       const cursor = orderCollection.find({});
       const orders = await cursor.toArray();
       res.json(orders);
     });
 
     //Get Single Service
-    app.get("/services/:id", async (req, res) => {
+    app.get("/packages/:id", async (req, res) => {
       const id = req.params.id;
       console.log("Getting Single Service", id);
       const query = { _id: ObjectId(id) };
@@ -52,7 +52,7 @@ async function run() {
     });
 
     //POST API For Services
-    app.post("/services", async (req, res) => {
+    app.post("/packages", async (req, res) => {
       const package = req.body;
       const result = await packageCollection.insertOne(package);
       console.log(result);
@@ -60,7 +60,7 @@ async function run() {
     });
 
     //POST API For Users
-    app.post("/users", async (req, res) => {
+    app.post("/orders", async (req, res) => {
       const user = req.body;
       const result = await orderCollection.insertOne(order);
       console.log(result);
@@ -71,7 +71,7 @@ async function run() {
     //Empty(-_-)
 
     //Delete
-    app.delete("/users/:id", async (req, res) => {
+    app.delete("/orders/:id", async (req, res) => {
       const id = req.params.id;
       console.log("Deleted Order", id);
       const query = { _id: ObjectId(id) };
