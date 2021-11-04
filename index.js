@@ -24,22 +24,22 @@ async function run() {
   try {
     await client.connect();
     // console.log('Successfully Connected');
-    const database = client.db("tourServices");
-    const serviceCollection = database.collection("services");
-    const userCollection = database.collection("users");
+    const database = client.db("tripPackages");
+    const packageCollection = database.collection("packages");
+    const orderCollection = database.collection("orders");
 
     //GET Srvices API
     app.get("/services", async (req, res) => {
-      const cursor = serviceCollection.find({});
-      const services = await cursor.toArray();
-      res.json(services);
+      const cursor = packageCollection.find({});
+      const packages = await cursor.toArray();
+      res.json(packages);
     });
 
     //GET Users API
     app.get("/users", async (req, res) => {
-      const cursor = userCollection.find({});
-      const users = await cursor.toArray();
-      res.json(users);
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
     });
 
     //Get Single Service
@@ -47,14 +47,14 @@ async function run() {
       const id = req.params.id;
       console.log("Getting Single Service", id);
       const query = { _id: ObjectId(id) };
-      const service = await serviceCollection.findOne(query);
-      res.json(service);
+      const package = await packageCollection.findOne(query);
+      res.json(package);
     });
 
     //POST API For Services
     app.post("/services", async (req, res) => {
-      const service = req.body;
-      const result = await serviceCollection.insertOne(service);
+      const package = req.body;
+      const result = await packageCollection.insertOne(package);
       console.log(result);
       res.json(result);
     });
@@ -62,7 +62,7 @@ async function run() {
     //POST API For Users
     app.post("/users", async (req, res) => {
       const user = req.body;
-      const result = await userCollection.insertOne(user);
+      const result = await orderCollection.insertOne(order);
       console.log(result);
       res.json(result);
     });
@@ -75,7 +75,7 @@ async function run() {
       const id = req.params.id;
       console.log("Deleted Order", id);
       const query = { _id: ObjectId(id) };
-      const result = await userCollection.deleteOne(query);
+      const result = await orderCollection.deleteOne(query);
       console.log("Deleted", result);
       res.json(result);
     });
