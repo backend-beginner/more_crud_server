@@ -42,6 +42,14 @@ async function run() {
       res.json(orders);
     });
 
+    //POST API For Services
+    app.post("/packages", async (req, res) => {
+      const package = req.body;
+      const result = await packageCollection.insertOne(package);
+      // console.log(result);
+      res.json(result);
+    });
+
     //Get Single Service
     app.get("/packages/:id", async (req, res) => {
       const id = req.params.id;
@@ -51,24 +59,43 @@ async function run() {
       res.json(package);
     });
 
-    //POST API For Services
-    app.post("/packages", async (req, res) => {
-      const package = req.body;
-      const result = await packageCollection.insertOne(package);
-      console.log(result);
-      res.json(result);
-    });
-
     //POST API For Orders
     app.post("/orders", async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
-      console.log(result);
+      // console.log(result);
       res.json(result);
     });
 
-    //Get Orders Email
-    //Empty(-_-)
+    //Get Orders by email
+    app.get("/orders", async (req, res) => {
+      console.log(req.query);
+      let query = {};
+      const email = req.query.email;
+      if (email) {
+        query = { email: email };
+      }
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+
+    //Update Status
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedOrder = req.body;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          bookedServiceStatus: updatedOrder.bookedServiceStatus,
+        },
+      };
+      const result = await orderCollection.updateOne(filter, updateDoc, options);
+      console.log("Edit & Saving", req);
+      res.json(result);
+    });
+
 
     //Delete
     app.delete("/orders/:id", async (req, res) => {
