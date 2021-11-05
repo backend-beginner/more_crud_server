@@ -28,7 +28,7 @@ async function run() {
     const packageCollection = database.collection("packages");
     const orderCollection = database.collection("orders");
 
-/*-------------------------------------------------------------------------------*\
+    /*-------------------------------------------------------------------------------*\
   //////////////////////////////// Packages \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
     //GET All Packages API
@@ -49,21 +49,15 @@ async function run() {
     //Book Single Package
     app.get("/packages/:id", async (req, res) => {
       const id = req.params.id;
-      console.log("Getting Single Service", id);
+      console.log("Single Package", id);
       const query = { _id: ObjectId(id) };
       const package = await packageCollection.findOne(query);
       res.json(package);
     });
-/*-------------------------------------------------------------------------------*\
+    /*-------------------------------------------------------------------------------*\
   //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
-    //GET My Orders API
-    app.get("/orders", async (req, res) => {
-      const cursor = orderCollection.find({});
-      const orders = await cursor.toArray();
-      res.json(orders);
-    }); 
-    
+
     //POST API For Orders
     app.post("/orders", async (req, res) => {
       const order = req.body;
@@ -72,7 +66,14 @@ async function run() {
       res.json(result);
     });
 
-    //Get Orders by email
+    //GET My Orders API
+    /* app.get("/orders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    }); */
+
+    //Get My Orders by email
     app.get("/orders", async (req, res) => {
       console.log(req.query);
       let query = {};
@@ -115,10 +116,10 @@ async function run() {
       console.log("Deleted", result);
       res.json(result);
     });
-/*-------------------------------------------------------------------------------*\
+    /*-------------------------------------------------------------------------------*\
   //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
-    
+
     //GET All Orders API
     app.get("/allorders", async (req, res) => {
       const cursor = orderCollection.find({});
@@ -136,6 +137,21 @@ async function run() {
       res.json(result);
     });
 
+    //Update Approved
+    app.put("/updateStatus/:id", (req, res) => {
+      const id = req.params.id;
+      const updatedStatus = req.body.status;
+      const filter = { _id: ObjectId(id) };
+      console.log(updatedStatus);
+      orderCollection
+        .updateOne(filter, {
+          $set: { bookedServiceStatus: updatedStatus },
+        })
+        .then((result) => {
+          res.send(result);
+          console.log(result);
+        });
+    });
   } finally {
     // await client.close();
   }
