@@ -28,21 +28,17 @@ async function run() {
     const packageCollection = database.collection("packages");
     const orderCollection = database.collection("orders");
 
-    //GET Srvices API
+/*-------------------------------------------------------------------------------*\
+  //////////////////////////////// Packages \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\*-------------------------------------------------------------------------------*/
+    //GET All Packages API
     app.get("/packages", async (req, res) => {
       const cursor = packageCollection.find({});
       const packages = await cursor.toArray();
       res.json(packages);
     });
 
-    //GET Users API
-    app.get("/orders", async (req, res) => {
-      const cursor = orderCollection.find({});
-      const orders = await cursor.toArray();
-      res.json(orders);
-    });
-
-    //POST API For Services
+    //POST API For Package
     app.post("/packages", async (req, res) => {
       const package = req.body;
       const result = await packageCollection.insertOne(package);
@@ -50,7 +46,7 @@ async function run() {
       res.json(result);
     });
 
-    //Get Single Service
+    //Book Single Package
     app.get("/packages/:id", async (req, res) => {
       const id = req.params.id;
       console.log("Getting Single Service", id);
@@ -58,7 +54,16 @@ async function run() {
       const package = await packageCollection.findOne(query);
       res.json(package);
     });
-
+/*-------------------------------------------------------------------------------*\
+  //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\*-------------------------------------------------------------------------------*/
+    //GET My Orders API
+    app.get("/orders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    }); 
+    
     //POST API For Orders
     app.post("/orders", async (req, res) => {
       const order = req.body;
@@ -83,21 +88,25 @@ async function run() {
     //Update Status
     app.put("/orders/:id", async (req, res) => {
       const id = req.params.id;
-      const updatedOrder = req.body;
+      console.log(id);
+      const updatedStatus = req.body;
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updateDoc = {
         $set: {
-          bookedServiceStatus: updatedOrder.bookedServiceStatus,
+          bookedServiceStatus: updatedStatus.bookedServiceStatus,
         },
       };
-      const result = await orderCollection.updateOne(filter, updateDoc, options);
+      const result = await orderCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
       console.log("Edit & Saving", req);
       res.json(result);
     });
 
-
-    //Delete
+    //Delete My Orders
     app.delete("/orders/:id", async (req, res) => {
       const id = req.params.id;
       console.log("Deleted Order", id);
@@ -106,6 +115,27 @@ async function run() {
       console.log("Deleted", result);
       res.json(result);
     });
+/*-------------------------------------------------------------------------------*\
+  //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\*-------------------------------------------------------------------------------*/
+    
+    //GET All Orders API
+    app.get("/allorders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+
+    //Delete From All Orders
+    app.delete("/allorders/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("Deleted Order", id);
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      console.log("Deleted", result);
+      res.json(result);
+    });
+
   } finally {
     // await client.close();
   }
