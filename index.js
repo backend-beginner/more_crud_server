@@ -54,71 +54,18 @@ async function run() {
       const package = await packageCollection.findOne(query);
       res.json(package);
     });
-    /*-------------------------------------------------------------------------------*\
-  //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+
+/*-------------------------------------------------------------------------------*\
+  //////////////////////////////// All Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
 
     //POST API For Orders
-    app.post("/orders", async (req, res) => {
+    app.post("/allorders", async (req, res) => {
       const order = req.body;
       const result = await orderCollection.insertOne(order);
       // console.log(result);
       res.json(result);
     });
-
-    //GET My Orders API
-    /* app.get("/orders", async (req, res) => {
-      const cursor = orderCollection.find({});
-      const orders = await cursor.toArray();
-      res.json(orders);
-    }); */
-
-    //Get My Orders by email
-    app.get("/orders", async (req, res) => {
-      console.log(req.query);
-      let query = {};
-      const email = req.query.email;
-      if (email) {
-        query = { email: email };
-      }
-      const cursor = orderCollection.find(query);
-      const orders = await cursor.toArray();
-      res.json(orders);
-    });
-
-    //Update Status
-    app.put("/orders/:id", async (req, res) => {
-      const id = req.params.id;
-      console.log(id);
-      const updatedStatus = req.body;
-      const filter = { _id: ObjectId(id) };
-      const options = { upsert: true };
-      const updateDoc = {
-        $set: {
-          bookedServiceStatus: updatedStatus.bookedServiceStatus,
-        },
-      };
-      const result = await orderCollection.updateOne(
-        filter,
-        updateDoc,
-        options
-      );
-      console.log("Edit & Saving", req);
-      res.json(result);
-    });
-
-    //Delete My Orders
-    app.delete("/orders/:id", async (req, res) => {
-      const id = req.params.id;
-      console.log("Deleted Order", id);
-      const query = { _id: ObjectId(id) };
-      const result = await orderCollection.deleteOne(query);
-      console.log("Deleted", result);
-      res.json(result);
-    });
-    /*-------------------------------------------------------------------------------*\
-  //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
-\*-------------------------------------------------------------------------------*/
 
     //GET All Orders API
     app.get("/allorders", async (req, res) => {
@@ -152,6 +99,35 @@ async function run() {
           console.log(result);
         });
     });
+/*-------------------------------------------------------------------------------*\
+  //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
+\*-------------------------------------------------------------------------------*/
+    
+    //Get My Orders by email
+    app.get("/myorders", async (req, res) => {
+      console.log(req.query);
+      let query = {};
+      const email = req.query.email;
+      if (email) {
+        query = { email: email };
+      }
+      const cursor = orderCollection.find(query);
+      const orders = await cursor.toArray();
+      res.json(orders);
+    });
+  
+
+    //Delete My Orders
+    app.delete("/myorders/:id", async (req, res) => {
+      const id = req.params.id;
+      console.log("Deleted Order", id);
+      const query = { _id: ObjectId(id) };
+      const result = await orderCollection.deleteOne(query);
+      console.log("Deleted", result);
+      res.json(result);
+    });
+
+    
   } finally {
     // await client.close();
   }
