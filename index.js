@@ -111,18 +111,13 @@ async function run() {
 
     //Get My Orders by email
     app.get("/myorders", async (req, res) => {
-      console.log(req.query); //
       let query = {};
-      console.log(query); //
       const email = req.query.email;
-      console.log(email); //
       if (email) {
-        query = { email: email };
+        query = { userEmail: email };
       }
       const cursor = orderCollection.find(query);
-      // console.log(cursor);
       const orders = await cursor.toArray();
-      console.log(orders); //
       res.json(orders);
     });
 
@@ -149,7 +144,7 @@ app.get("/", (req, res) => {
 //Testing Dummy Query Search
 //http://localhost:5000/contacts?search=selina
 
-const contacts = [
+/* const contacts = [
   { id: 0, name: "John", number: "+880 77 88 91" },
   { id: 1, name: "Roman", number: "+880 77 88 92" },
   { id: 2, name: "Selina", number: "+880 77 88 93" },
@@ -166,7 +161,7 @@ app.get("/contacts", (req, res) => {
   } else {
     res.send(contacts);
   }
-});
+}); */
 
 app.listen(port, () => {
   console.log("Welcome to PORT", port);
