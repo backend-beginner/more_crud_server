@@ -55,7 +55,7 @@ async function run() {
       res.json(package);
     });
 
-/*-------------------------------------------------------------------------------*\
+    /*-------------------------------------------------------------------------------*\
   //////////////////////////////// All Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
 
@@ -74,7 +74,7 @@ async function run() {
       res.json(orders);
     });
 
-    //Delete From All Orders
+    //Delete Single Order From All Orders
     app.delete("/allorders/:id", async (req, res) => {
       const id = req.params.id;
       console.log("Deleted Order", id);
@@ -99,23 +99,32 @@ async function run() {
           console.log(result);
         });
     });
-/*-------------------------------------------------------------------------------*\
+    /*-------------------------------------------------------------------------------*\
   //////////////////////////////// My Orders \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\
 \*-------------------------------------------------------------------------------*/
-    
+    //GET My Orders API
+    /* app.get("/myorders", async (req, res) => {
+      const cursor = orderCollection.find({});
+      const orders = await cursor.toArray();
+      res.json(orders);
+    }); */
+
     //Get My Orders by email
     app.get("/myorders", async (req, res) => {
-      console.log(req.query);
+      console.log(req.query); //
       let query = {};
+      console.log(query); //
       const email = req.query.email;
+      console.log(email); //
       if (email) {
         query = { email: email };
       }
       const cursor = orderCollection.find(query);
+      // console.log(cursor);
       const orders = await cursor.toArray();
+      console.log(orders); //
       res.json(orders);
     });
-  
 
     //Delete My Orders
     app.delete("/myorders/:id", async (req, res) => {
@@ -126,8 +135,6 @@ async function run() {
       console.log("Deleted", result);
       res.json(result);
     });
-
-    
   } finally {
     // await client.close();
   }
